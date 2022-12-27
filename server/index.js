@@ -6,8 +6,8 @@ import jwt_decode from 'jwt-decode';
 import { v4 as uuidv4 } from 'uuid';
 
 const server = jsonServer.create();
-const router = jsonServer.router('./database.json');
-const userdb = JSON.parse(fs.readFileSync('./users.json', 'UTF-8'));
+const router = jsonServer.router('./server/database.json');
+const userdb = JSON.parse(fs.readFileSync('./server/users.json', 'UTF-8'));
 
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
@@ -51,7 +51,7 @@ server.post('/auth/register', (req, res) => {
 
 	const userId = uuidv4();
 
-	fs.readFile('./users.json', (err, data) => {
+	fs.readFile('./server/users.json', (err, data) => {
 		if (err) {
 			const status = 401;
 			const message = err;
@@ -65,7 +65,7 @@ server.post('/auth/register', (req, res) => {
 		//Add new user
 		data.users.push({ id: userId, email: email, password: password }); //add some data
 		var writeData = fs.writeFile(
-			'./users.json',
+			'./server/users.json',
 			JSON.stringify(data),
 			(err, result) => {
 				// WRITE
@@ -88,7 +88,7 @@ server.post('/auth/register', (req, res) => {
 server.get('/todos', (req, res) => {
 	var decoded = jwt_decode(req.headers.authorization.split(' ')[1]);
 
-	fs.readFile('./database.json', (err, data) => {
+	fs.readFile('./server/database.json', (err, data) => {
 		if (err) {
 			const status = 401;
 			const message = err;
@@ -110,7 +110,7 @@ server.post('/todos', (req, res) => {
 
 	const tododId = uuidv4();
 
-	fs.readFile('./database.json', (err, data) => {
+	fs.readFile('./server/database.json', (err, data) => {
 		if (err) {
 			const status = 401;
 			const message = err;
@@ -127,7 +127,7 @@ server.post('/todos', (req, res) => {
 			text: req.body.text,
 		});
 
-		fs.writeFile('./database.json', JSON.stringify(data), (err, result) => {
+		fs.writeFile('./server/database.json', JSON.stringify(data), (err, result) => {
 			// WRITE
 			if (err) {
 				const status = 401;
@@ -147,7 +147,7 @@ server.post('/todos', (req, res) => {
 server.delete('/todos/:id', (req, res) => {
 	var decoded = jwt_decode(req.headers.authorization.split(' ')[1]);
 
-	fs.readFile('./database.json', (err, data) => {
+	fs.readFile('./server/database.json', (err, data) => {
 		if (err) {
 			const status = 401;
 			const message = err;
@@ -175,7 +175,7 @@ server.delete('/todos/:id', (req, res) => {
 		const todos = data.todos.filter((item) => item.id !== req.params.id);
 		data.todos = todos;
 
-		fs.writeFile('./database.json', JSON.stringify(data), (err, result) => {
+		fs.writeFile('./server/database.json', JSON.stringify(data), (err, result) => {
 			// WRITE
 			if (err) {
 				const status = 401;
@@ -193,7 +193,7 @@ server.delete('/todos/:id', (req, res) => {
 server.patch('/todos/:id', (req, res) => {
 	var decoded = jwt_decode(req.headers.authorization.split(' ')[1]);
 
-	fs.readFile('./database.json', (err, data) => {
+	fs.readFile('./server/database.json', (err, data) => {
 		if (err) {
 			const status = 401;
 			const message = err;
@@ -230,7 +230,7 @@ server.patch('/todos/:id', (req, res) => {
 		});
 		data.todos = todos;
 
-		fs.writeFile('./database.json', JSON.stringify(data), (err, result) => {
+		fs.writeFile('./server/database.json', JSON.stringify(data), (err, result) => {
 			// WRITE
 			if (err) {
 				const status = 401;
@@ -244,7 +244,7 @@ server.patch('/todos/:id', (req, res) => {
 	});
 });
 
-// Login to one of the users from ./users.json
+// Login to one of the users from ./server/users.json
 server.post('/auth/login', (req, res) => {
 	console.log('login endpoint called; request body:');
 	console.log(req.body);

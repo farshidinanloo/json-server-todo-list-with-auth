@@ -7,8 +7,7 @@
 		"dev": "vite",
 		"build": "tsc && vite build",
 		"preview": "vite preview",
-		"start": "json-server --watch ./database.json",
-		"start-auth": "node server.js"
+		"start:server": "node ./server/index.js"
 	},
 	"dependencies": {
 		"axios": "^1.2.1",
